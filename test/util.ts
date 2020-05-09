@@ -2,7 +2,7 @@ import { resolve as pathResolve } from 'path';
 
 import { AJS, SDB, Types } from '..';
 
-const nedb = new SDB('nedb://memory');
+const nedb = new SDB(`file://${pathResolve(__dirname, '../.tmp/')}`);
 
 const mongo = new SDB();
 mongo.connect('mongodb://localhost:27017/test');
@@ -46,7 +46,7 @@ const personMongoModel = mongo.model<{
 
 const sdb2 = new SDB('file://', { memory: true });
 const person2Model = sdb2.model<any>('Person', personSchema);
-const sdb3 = new SDB(`file://${pathResolve(__dirname, '../.tmp/')}`);
+const sdb3 = new SDB('nedb://memory');
 const person3Model = sdb3.model<any>('Person', personSchema);
 
 export { nedb, mongo, personModel, personMongoModel, person2Model, person3Model };

@@ -1,9 +1,11 @@
 import test from 'ava';
 
-import { mongo, person2Model, person3Model, personModel } from './util';
+import { nedb, person2Model, person3Model, personModel } from './util';
 
 test.after(async (t) => {
-  await mongo.disconnect();
+  await personModel.dropIndex('age_1');
+  await personModel.drop(true);
+  await nedb.disconnect();
   t.pass();
 });
 
@@ -157,7 +159,7 @@ test('createIndex && dropIndex', async (t) => {
   );
 
   await personModel.dropIndex('name_1');
-  await personModel.dropIndex('age_1');
+  // await personModel.dropIndex('age_1');
 
   await t.notThrowsAsync(async () => {
     await personModel.insertOne({ name: 'name' });

@@ -66,6 +66,10 @@ class MongoCollection<T> extends AbstractCollection<T> {
   ): Promise<UpdateWriteOpResult> {
     return this.collection.updateOne(filter, document, options);
   }
+
+  public async drop() {
+    return this.collection.drop();
+  }
 }
 
 export { MongoCollection };

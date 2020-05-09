@@ -45,6 +45,8 @@ abstract class Collection<T> {
     document: InsertDoc<T>,
     options?: UpdateOptions
   ): Promise<UpdateResult>;
+
+  public abstract async drop(): Promise<void>;
 }
 
 export { Collection };

@@ -247,6 +247,23 @@ class NedbCollection<T> extends Collection<T> {
       });
     });
   }
+
+  public async drop(force = false) {
+    if (!force) {
+      throw new Error('nedb not support drop');
+    }
+
+    await this.deleteMany({});
+    await new Promise((resolve, reject) => {
+      this.collection.loadDatabase((err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
 }
 
 export { NedbCollection };

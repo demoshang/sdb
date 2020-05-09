@@ -3,6 +3,7 @@ import test from 'ava';
 import { personMongoModel, mongo } from './util';
 
 test.after(async (t) => {
+  await personMongoModel.drop();
   await mongo.disconnect();
   t.pass();
 });
@@ -131,7 +132,6 @@ test('createIndex && dropIndex', async (t) => {
   );
 
   await personMongoModel.dropIndex('name_1');
-  await personMongoModel.dropIndex('age_1');
 
   await t.notThrowsAsync(async () => {
     await personMongoModel.insertOne({ name: 'name' });
