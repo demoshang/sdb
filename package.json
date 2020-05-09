@@ -7,7 +7,9 @@
     "start": "ts-node --project tsconfig.json --files --pretty --log-error index.ts",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint --format './node_modules/eslint-formatter-friendly/index.js' \"src/**/*.ts\"",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:fix": "npm run lint -- --fix",
+    "test": "TS_NODE_FILES=true TS_NODE_PRETTY=true ava --serial --fail-fast -v",
+    "coverage": "TS_NODE_FILES=true TS_NODE_PRETTY=true nyc ava --serial --fail-fast -v"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +25,7 @@
     "@types/nedb": "^1.8.9",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",
+    "ava": "^3.8.2",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.10.0",
@@ -30,11 +33,44 @@
     "eslint-loader": "^3.0.3",
     "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-prettier": "^3.1.2",
+    "nyc": "^15.0.1",
     "prettier": "^1.19.1",
     "ts-node": "^8.10.1",
     "typescript": "^3.8.3"
   },
   "optionalDependencies": {
     "nedb": "^1.8.0"
+  },
+  "ava": {
+    "files": [
+      "test/**/*.test.ts"
+    ],
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
+  },
+  "nyc": {
+    "include": [
+      "index.ts",
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "**/*.d.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "html",
+      "text-summary"
+    ],
+    "sourceMap": true,
+    "instrument": true
   }
 }
