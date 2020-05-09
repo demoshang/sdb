@@ -24,4 +24,7 @@ Temporary Items
 
 
 node_modules
+/.tmp
 /dist
+/.nyc_output
+/coverage

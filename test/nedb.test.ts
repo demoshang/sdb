@@ -1,10 +1,41 @@
 import test from 'ava';
 
-import { personModel } from './util';
+import { mongo, person2Model, person3Model, personModel } from './util';
+
+test.after(async (t) => {
+  await mongo.disconnect();
+  t.pass();
+});
 
 test.beforeEach(async (t) => {
   await personModel.deleteMany({});
   t.pass();
+});
+
+test('db connect', async (t) => {
+  const name = `insertOne ${Date.now()}`;
+
+  await person2Model.insertOne({
+    name,
+  });
+  let nu = await person2Model.countDocuments({ name });
+  t.is(nu, 1);
+
+  await person3Model.insertOne({
+    name,
+  });
+  nu = await person3Model.countDocuments({ name });
+  t.is(nu, 1);
+
+  await t.throwsAsync(async () => {
+    person2Model.addPlugin('', '');
+  });
+
+  await t.throwsAsync(async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    await person2Model.xxxx();
+  });
 });
 
 test('insertOne && findOne', async (t) => {
@@ -33,14 +64,12 @@ test('insertMany && find', async (t) => {
     },
   ]);
 
-  const persons = await personModel.find({});
-  const arr = persons
-    .map(({ name }) => {
-      return name;
-    })
-    .sort();
+  const persons = await personModel.find({}, { sort: { name: -1 }, skip: 0 });
+  const arr = persons.map(({ name }) => {
+    return name;
+  });
 
-  t.deepEqual([name1, name2], arr);
+  t.deepEqual([name2, name1], arr);
 });
 
 test('countDocuments && updateOne && updateMany', async (t) => {
@@ -109,21 +138,37 @@ test('deleteOne && deleteMany', async (t) => {
 
 test('createIndex && dropIndex', async (t) => {
   await personModel.createIndex({ name: 1 }, { unique: true });
+  await personModel.createIndex('age', { unique: true });
 
-  await personModel.insertOne({ name: 'name' });
+  await personModel.insertOne({ name: 'name', age: 18 });
 
   await t.throwsAsync(
     async () => {
       await personModel.insertOne({ name: 'name' });
     },
-    { message: /unique/ }
+    { message: /unique|duplicate/ }
   );
 
-  await personModel.dropIndex('name');
+  await t.throwsAsync(
+    async () => {
+      await personModel.updateOne({ name: 'name2' }, { age: 18 }, { upsert: true });
+    },
+    { message: /unique|duplicate/ }
+  );
+
+  await personModel.dropIndex('name_1');
+  await personModel.dropIndex('age_1');
 
   await t.notThrowsAsync(async () => {
     await personModel.insertOne({ name: 'name' });
   });
+
+  await t.throwsAsync(
+    async () => {
+      await personModel.createIndex({ name: 1, age: 1 }, { unique: true });
+    },
+    { message: /only one field/ }
+  );
 });
 
 test('schema check', async (t) => {
@@ -151,4 +196,53 @@ test('schema check', async (t) => {
   await personModel.insertOne({ name: 'name_default_age' });
   const person = await personModel.findOne({ name: 'name_default_age' });
   t.is(person?.age, 20);
+});
+
+test('plugin', async (t) => {
+  await personModel.insertOne({ name: 'name', age: 20 });
+
+  let nu = await personModel.countDocuments({ age: { $gte: 20 } });
+  t.is(nu, 1);
+
+  nu = await personModel.countDocuments({
+    $and: [{ age: { $gte: 20 } }, { name: 'name' }],
+  });
+
+  t.is(nu, 1);
+
+  await t.throwsAsync(
+    async () => {
+      await personModel.countDocuments({
+        $and: { age: { $gte: 20 } },
+      });
+    },
+    { message: /need array value/ }
+  );
+
+  nu = await personModel.countDocuments({
+    name: {
+      $in: ['name', 'name1'],
+    },
+  });
+  t.is(nu, 1);
+
+  await personModel.updateOne({ name: 'name' }, { hobbies: ['a', 'b'] });
+  nu = await personModel.countDocuments({ hobbies: { $elemMatch: { $in: ['a'] } } });
+  t.is(nu, 1);
+
+  await personModel.updateOne({ name: 'name' }, { $push: { hobbies: 'c' } });
+  let doc = await personModel.findOne({ name: 'name' });
+  t.is(doc?.hobbies?.length, 3);
+
+  await personModel.updateOne({ name: 'name' }, { $addToSet: { hobbies: 'a' } });
+  doc = await personModel.findOne({ name: 'name' });
+  t.is(doc?.hobbies?.length, 3);
+
+  await personModel.updateOne({ name: 'name' }, { $pull: { hobbies: 'a' } });
+  doc = await personModel.findOne({ name: 'name' });
+  t.is(doc?.hobbies?.length, 2);
+
+  await personModel.updateOne({ name: 'name' }, { $push: { hobbies: { $each: ['a', 'b'] } } });
+  doc = await personModel.findOne({ name: 'name' });
+  t.is(doc?.hobbies?.length, 4);
 });
