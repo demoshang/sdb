@@ -2,7 +2,9 @@ import { ObjectId, UpdateWriteOpResult, OptionalId } from 'mongodb';
 
 export type Optional<T> = { [P in keyof T]?: T[P] };
 
-export type Query<T> = (Optional<T> | { [P in keyof T]?: object }) & { _id?: any };
+export type Query<T> = (Optional<T> | { [P in keyof T]?: object } | { [key: string]: any }) & {
+  _id?: any;
+};
 export type Project<T> = { [P in keyof T]?: 1 | 0 };
 export type InsertDoc<T> = (
   | OptionalId<T>

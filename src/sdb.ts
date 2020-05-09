@@ -6,7 +6,7 @@ import { Nedb } from './client/nedb';
 import { MongoCollection } from './collection/mongo';
 import { NedbCollection } from './collection/nedb';
 import { Model } from './model';
-import { Schema, SchemaJson, Types } from './schema';
+import { AJS, Schema, SchemaJson, Types } from './schema';
 
 type ConnectOptions = MongoClientOptions & { memory?: boolean; timestampData?: boolean } & {
   collName?: string;
@@ -38,6 +38,10 @@ class SDB {
     }
 
     return this.client;
+  }
+
+  public async disconnect() {
+    await this.client?.disconnect();
   }
 
   public static Schema(name: string, schemaJSON: SchemaJson) {
@@ -95,4 +99,4 @@ class SDB {
   }
 }
 
-export { SDB, Types };
+export { SDB, AJS, Types };

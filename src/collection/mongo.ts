@@ -44,11 +44,11 @@ class MongoCollection<T> extends AbstractCollection<T> {
   }
 
   public async insertMany(docs: InsertDoc<T>[], options?: CollectionInsertOneOptions) {
-    return this.collection.insertMany(docs, options);
+    return this.collection.insertMany(docs as any, options);
   }
 
   public async insertOne(doc: InsertDoc<T>, options?: CollectionInsertOneOptions) {
-    return this.collection.insertOne(doc, options);
+    return this.collection.insertOne(doc as any, options);
   }
 
   public async updateMany(

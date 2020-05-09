@@ -75,4 +75,4 @@ class Schema extends AJS {
   }
 }
 
-export { Schema, Types };
+export { Schema, AJS, Types };

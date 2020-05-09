@@ -1,3 +1,4 @@
+import { isNil } from 'lodash';
 import {
   DeleteWriteOpResultObject,
   IndexOptions,
@@ -104,7 +105,7 @@ class NedbCollection<T> extends Collection<T> {
 
   public async dropIndex(indexName: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.collection.removeIndex(indexName, (err) => {
+      this.collection.removeIndex(indexName.replace(/_\d+$/, ''), (err) => {
         if (err) {
           reject(err);
           return;
@@ -125,7 +126,7 @@ class NedbCollection<T> extends Collection<T> {
       cursor = cursor.sort(sort);
     }
 
-    if (skip) {
+    if (!isNil(skip)) {
       cursor = cursor.skip(skip);
     }
 

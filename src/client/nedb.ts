@@ -52,9 +52,6 @@ class Nedb {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  public connect() {}
-
-  // eslint-disable-next-line class-methods-use-this
   public disconnect() {}
 
   public async getCollection<T>(name: string, opts?: any): Promise<NedbCollection<T>> {
