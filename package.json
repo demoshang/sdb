@@ -47,6 +47,9 @@
     "mongodb": "^3.5.7",
     "nedb": "^1.8.0"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "ava": {
     "files": [
       "test/**/*.test.ts"
@@ -74,6 +77,7 @@
     ],
     "reporter": [
       "html",
+      "lcov",
       "text-summary"
     ],
     "sourceMap": true,
