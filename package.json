@@ -1,5 +1,5 @@
 {
-  "name": "sdb",
+  "name": "@s4p/sdb",
   "version": "0.0.1",
   "description": "simple db",
   "main": "index.js",
@@ -11,8 +11,13 @@
     "test": "TS_NODE_FILES=true TS_NODE_PRETTY=true ava --serial --fail-fast -v",
     "coverage": "TS_NODE_FILES=true TS_NODE_PRETTY=true nyc ava --serial --fail-fast -v"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "nedb",
+    "mongo",
+    "mongodb",
+    "memory"
+  ],
+  "author": "xinshangshangxin",
   "license": "MIT",
   "dependencies": {
     "another-json-schema": "^3.8.2",
@@ -39,6 +44,7 @@
     "typescript": "^3.8.3"
   },
   "optionalDependencies": {
+    "mongodb": "^3.5.7",
     "nedb": "^1.8.0"
   },
   "ava": {
