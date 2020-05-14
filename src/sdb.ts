@@ -54,7 +54,7 @@ class SDB {
     return new Schema(name, schemaJSON);
   }
 
-  public model<T>(name: string, inputSchema: SchemaJson | Schema) {
+  public model<T>(name: string, inputSchema: SchemaJson | Schema): ProxyModel<T> {
     // 如果已经存在
     if (this.models[name]) {
       return this.models[name].model as ProxyModel<T>;

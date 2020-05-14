@@ -1,5 +1,6 @@
 import test from 'ava';
 
+import { omit } from 'lodash';
 import { nedb, person2Model, person3Model, personModel } from './util';
 
 test.after(async (t) => {
@@ -198,6 +199,16 @@ test('schema check', async (t) => {
   await personModel.insertOne({ name: 'name_default_age' });
   const person = await personModel.findOne({ name: 'name_default_age' });
   t.is(person?.age, 20);
+});
+
+test('ignore attributes not schema ', async (t) => {
+  const base = { name: 'name', age: 18 };
+  await t.notThrowsAsync(async () => {
+    await personModel.insertOne({ ...base, xxxxx: 1, a: { b: { c: 1 } } });
+  });
+
+  const person = await personModel.findOne({});
+  t.deepEqual(omit(person, ['_id', 'createdAt', 'updatedAt']), base);
 });
 
 test('plugin', async (t) => {

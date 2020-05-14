@@ -9,18 +9,25 @@ function formatSet(
   doc: any,
   schemaPath = '',
   parentKey?: string,
-  subSchema = compiledSchema
+  subSchema = compiledSchema,
+  schemaPrivilege: 'unset' | 'keep' | 'error' = 'unset'
 ) {
   if (isPlainObject(doc) && !subSchema._leaf) {
     Object.entries(doc).forEach(([key, subDoc]) => {
       const subSchemaPath = `${schemaPath ? `${schemaPath}.` : ''}${key}`;
       subSchema = getSchema(compiledSchema, subSchemaPath);
-      doc[key] = formatSet(compiledSchema, subDoc, subSchemaPath, key, subSchema);
+      doc[key] = formatSet(compiledSchema, subDoc, subSchemaPath, key, subSchema, schemaPrivilege);
     });
   } else {
     const schema = getSchema(compiledSchema, schemaPath);
     if (!schema) {
-      throw new Error(`No schema found on path: $.${schemaPath}`);
+      if (schemaPrivilege === 'error') {
+        throw new Error(`No schema found on path: $.${schemaPath}`);
+      } else if (schemaPrivilege === 'keep') {
+        return doc;
+      }
+
+      return undefined;
     }
     // only leaf & only check type & ignoreNodeType
     if (Array.isArray(doc)) {
