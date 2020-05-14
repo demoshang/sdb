@@ -6,6 +6,7 @@
     "resolveJsonModule": true,
     "target": "ES2018",
     "module": "CommonJS",
+    "declaration": true,
     "allowJs": false,
     "checkJs": false,
     "sourceMap": true,
