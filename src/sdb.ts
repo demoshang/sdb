@@ -12,6 +12,12 @@ type ConnectOptions = MongoClientOptions & { memory?: boolean; timestampData?: b
   collName?: string;
 };
 
+export type ProxyModel<T> = (
+  | NedbCollection<{ _id?: any; createdAt?: Date; updatedAt?: Date } & T>
+  | MongoCollection<{ _id?: any; createdAt?: Date; updatedAt?: Date } & T>
+) &
+  Model;
+
 class SDB {
   private client?: Mongodb | Nedb;
 
@@ -49,15 +55,9 @@ class SDB {
   }
 
   public model<T>(name: string, inputSchema: SchemaJson | Schema) {
-    type ProxyModel = (
-      | NedbCollection<{ _id?: any; createdAt?: Date; updatedAt?: Date } & T>
-      | MongoCollection<{ _id?: any; createdAt?: Date; updatedAt?: Date } & T>
-    ) &
-      Model;
-
     // 如果已经存在
     if (this.models[name]) {
-      return this.models[name].model as ProxyModel;
+      return this.models[name].model as ProxyModel<T>;
     }
 
     // 检查client 是否已经连接
@@ -95,7 +95,7 @@ class SDB {
       model: proxyModel,
     };
 
-    return proxyModel as ProxyModel;
+    return proxyModel as ProxyModel<T>;
   }
 }
 
