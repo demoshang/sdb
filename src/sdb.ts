@@ -1,63 +1,29 @@
-import { MongoClientOptions } from 'mongodb';
-
-import { getClient } from './client';
-import { Mongodb } from './client/mongodb';
-import { Nedb } from './client/nedb';
-import { MongoCollection } from './collection/mongo';
-import { NedbCollection } from './collection/nedb';
 import { Model } from './model';
 import { AJS, Schema, SchemaJson, Types } from './schema';
 
-type ConnectOptions = MongoClientOptions & { memory?: boolean; timestampData?: boolean } & {
-  collName?: string;
-};
-
-export type ProxyModel<T> = (
-  | NedbCollection<{ _id?: any; createdAt?: Date; updatedAt?: Date } & T>
-  | MongoCollection<{ _id?: any; createdAt?: Date; updatedAt?: Date } & T>
-) &
-  Model;
-
 class SDB {
-  private client?: Mongodb | Nedb;
-
   private models: {
     [key: string]: {
       name: string;
       plugins: any[];
-      model: NedbCollection<any> | MongoCollection<any>;
+      model: any;
     };
   } = {};
 
-  constructor(private url?: string | 'memory', private opts?: ConnectOptions) {
-    if (this.url) {
-      this.client = getClient(this.url, this.opts);
-    }
-  }
+  constructor(private client?: any, private opts?: any) {}
 
-  public connect(url: string, opts?: ConnectOptions) {
-    if (!this.client) {
-      this.url = url;
-      this.opts = opts;
-
-      this.client = getClient(url, opts);
-    }
-
-    return this.client;
+  public static Schema(name: string, schemaJSON: SchemaJson) {
+    return new Schema(name, schemaJSON);
   }
 
   public async disconnect() {
     await this.client?.disconnect();
   }
 
-  public static Schema(name: string, schemaJSON: SchemaJson) {
-    return new Schema(name, schemaJSON);
-  }
-
-  public model<T>(name: string, inputSchema: SchemaJson | Schema): ProxyModel<T> {
+  public getModel<K>(name: string, inputSchema: SchemaJson | Schema): K {
     // 如果已经存在
     if (this.models[name]) {
-      return this.models[name].model as ProxyModel<T>;
+      return this.models[name].model as K;
     }
 
     // 检查client 是否已经连接
@@ -95,7 +61,7 @@ class SDB {
       model: proxyModel,
     };
 
-    return proxyModel as ProxyModel<T>;
+    return proxyModel as K;
   }
 }
 

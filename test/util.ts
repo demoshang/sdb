@@ -1,10 +1,10 @@
 import { resolve as pathResolve } from 'path';
 
-import { AJS, SDB, Types } from '..';
+import { AJS, FDB, MDB, Types } from '..';
 
-const nedb = new SDB(`file://${pathResolve(__dirname, '../.tmp/')}`);
+const fileDB = new FDB(`file://${pathResolve(__dirname, '../.tmp/')}`);
 
-const mongo = new SDB();
+const mongo = new MDB();
 mongo.connect('mongodb://localhost:27017/test');
 
 AJS.register('string[]', (...args: any[]) => {
@@ -23,7 +23,7 @@ const personSchema = {
   hobbies: { type: Types.Mixed, 'string[]': true },
 };
 
-const personModel = nedb.model<{ name?: string; age?: number; gender?: string; hobbies?: any[] }>(
+const personModel = fileDB.model<{ name?: string; age?: number; gender?: string; hobbies?: any[] }>(
   'Person',
   personSchema
 );
@@ -44,9 +44,9 @@ const personMongoModel = mongo.model<{
   hobbies?: any[];
 }>('Person', personSchema);
 
-const sdb2 = new SDB('file://', { memory: true });
+const sdb2 = new FDB('file://', { memory: true });
 const person2Model = sdb2.model<any>('Person', personSchema);
-const sdb3 = new SDB('nedb://memory');
+const sdb3 = new FDB('nedb://memory');
 const person3Model = sdb3.model<any>('Person', personSchema);
 
-export { nedb, mongo, personModel, personMongoModel, person2Model, person3Model };
+export { fileDB as nedb, mongo, personModel, personMongoModel, person2Model, person3Model };
