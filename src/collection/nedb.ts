@@ -1,15 +1,32 @@
 import { isNil } from 'lodash';
-import {
-  DeleteWriteOpResultObject,
-  IndexOptions,
-  InsertOneWriteOpResult,
-  UpdateWriteOpResult,
-  WithId,
-} from 'mongodb';
 import { EnsureIndexOptions } from 'nedb';
 
 import { Collection } from './collection';
-import { FindOptions, InsertDoc, Query, UpdateOptions } from './interface';
+import {
+  FindOptions,
+  InsertDoc,
+  Query,
+  UpdateOptions,
+  UpdateWriteOpResult,
+  InsertOneWriteOpResult,
+} from './interface';
+
+interface DeleteWriteOpResultObject {
+  result: {
+    ok?: number;
+    n?: number;
+  };
+
+  connection?: any;
+
+  deletedCount?: number;
+}
+
+interface IndexOptions {
+  unique?: boolean;
+  expireAfterSeconds?: number;
+  sparse?: boolean;
+}
 
 class NedbCollection<T> extends Collection<T> {
   constructor(private collection: Nedb) {
@@ -181,7 +198,7 @@ class NedbCollection<T> extends Collection<T> {
     };
   }
 
-  public async insertOne(doc: InsertDoc<T>): Promise<InsertOneWriteOpResult<WithId<T>>> {
+  public async insertOne(doc: InsertDoc<T>): Promise<InsertOneWriteOpResult> {
     return new Promise((resolve, reject) => {
       this.collection.insert(doc, (err, data) => {
         if (err) {
@@ -191,7 +208,7 @@ class NedbCollection<T> extends Collection<T> {
 
         resolve({
           insertedCount: 1,
-          insertedId: data._id as any,
+          insertedId: data._id as string,
           ops: [],
           connection: undefined,
           result: { ok: 1, n: 1 },

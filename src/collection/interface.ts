@@ -1,4 +1,4 @@
-import { ObjectId, UpdateWriteOpResult, OptionalId } from 'mongodb';
+import { ObjectId, OptionalId } from 'mongodb';
 
 export type Optional<T> = { [P in keyof T]?: T[P] };
 
@@ -49,4 +49,40 @@ export interface UpdateResult extends Omit<UpdateWriteOpResult, 'upsertedId'> {
   upsertedId: {
     _id: ObjectId | string;
   };
+}
+
+export interface InsertOneWriteOpResult {
+  insertedCount: number;
+  insertedId: string;
+  ops?: any[];
+  connection?: any;
+  result: { ok: number; n: number };
+}
+
+export interface UpdateWriteOpResult {
+  result: { ok: number; n: number; nModified: number };
+  connection: any;
+  matchedCount: number;
+  modifiedCount: number;
+  upsertedCount: number;
+  upsertedId: { _id: ObjectId };
+}
+
+export interface DeleteWriteOpResultObject {
+  result: {
+    ok?: number;
+    n?: number;
+  };
+  connection?: any;
+  deletedCount?: number;
+}
+
+export interface CollectionInsertOneOptions {
+  serializeFunctions?: boolean;
+  forceServerObjectId?: boolean;
+  bypassDocumentValidation?: boolean;
+  session?: any;
+  w?: number | 'majority' | string;
+  j?: boolean;
+  wtimeout?: number;
 }

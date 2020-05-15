@@ -1,13 +1,14 @@
 import {
   CollectionInsertOneOptions,
   DeleteWriteOpResultObject,
+  FindOptions,
   IndexOptions,
+  InsertDoc,
   InsertOneWriteOpResult,
-  InsertWriteOpResult,
-  WithId,
-} from 'mongodb';
-
-import { FindOptions, InsertDoc, Query, UpdateOptions, UpdateResult } from './interface';
+  Query,
+  UpdateOptions,
+  UpdateResult,
+} from './interface';
 
 abstract class Collection<T> {
   public abstract countDocuments(query: Query<T>): Promise<number>;
@@ -27,12 +28,18 @@ abstract class Collection<T> {
   public abstract async insertMany(
     docs: InsertDoc<T>[],
     options?: CollectionInsertOneOptions
-  ): Promise<InsertWriteOpResult<WithId<T>>>;
+  ): Promise<{
+    insertedCount: number;
+    ops: any[];
+    insertedIds: any;
+    connection: any;
+    result: { ok: number; n: number };
+  }>;
 
   public abstract async insertOne(
     doc: InsertDoc<T>,
     options?: CollectionInsertOneOptions
-  ): Promise<InsertOneWriteOpResult<WithId<T>>>;
+  ): Promise<InsertOneWriteOpResult>;
 
   public abstract async updateMany(
     filter: Query<T>,

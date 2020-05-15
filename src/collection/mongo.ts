@@ -7,7 +7,7 @@ import {
 } from 'mongodb';
 
 import { Collection as AbstractCollection } from './collection';
-import { FindOptions, InsertDoc, Query, UpdateOptions } from './interface';
+import { FindOptions, InsertDoc, InsertOneWriteOpResult, Query, UpdateOptions } from './interface';
 
 class MongoCollection<T> extends AbstractCollection<T> {
   constructor(private collection: Collection<T>) {
@@ -48,7 +48,7 @@ class MongoCollection<T> extends AbstractCollection<T> {
   }
 
   public async insertOne(doc: InsertDoc<T>, options?: CollectionInsertOneOptions) {
-    return this.collection.insertOne(doc as any, options);
+    return this.collection.insertOne(doc as any, options) as Promise<InsertOneWriteOpResult>;
   }
 
   public async updateMany(
