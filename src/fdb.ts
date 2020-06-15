@@ -6,7 +6,8 @@ import { SDB } from './sdb';
 
 type ConnectOptions = { memory?: boolean; timestampData?: boolean; collName?: string };
 
-export type FdbModel<T> = NedbCollection<{ _id?: any; createdAt?: Date; updatedAt?: Date } & T> & Model;
+export type FdbModel<T> = NedbCollection<{ _id?: any; createdAt?: Date; updatedAt?: Date } & T> &
+  Model;
 
 class FDB {
   private sdb?: SDB;

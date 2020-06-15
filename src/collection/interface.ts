@@ -1,4 +1,8 @@
-import { ObjectId, OptionalId } from 'mongodb';
+type ObjectId = any;
+
+export type OptionalId<TSchema extends { _id?: any }> = ObjectId extends TSchema
+  ? { _id?: any; [key: string]: any }
+  : { _id?: any; [key: string]: any };
 
 export type Optional<T> = { [P in keyof T]?: T[P] };
 

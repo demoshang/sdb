@@ -1,7 +1,5 @@
 import { filter, isPlainObject, isString, upperFirst } from 'lodash';
 
-import { Mongodb } from './client/mongodb';
-import { Nedb } from './client/nedb';
 import { Schema } from './schema';
 
 class Model {
@@ -12,7 +10,7 @@ class Model {
   constructor(
     name: string,
     public schema: Schema,
-    private client: Mongodb | Nedb,
+    private client: any,
     opts: { collName?: string } = {}
   ) {
     this.collName = opts.collName || name.toLowerCase();
@@ -34,14 +32,9 @@ class Model {
   public async exec(op: string, ...args: any[]) {
     await this.execBefore(op, ...args);
 
-    let collection;
-    if (this.client instanceof Nedb) {
-      collection = await this.client.getCollection<any>(this.collName);
-    } else {
-      collection = await this.client.getCollection<any>(this.collName);
-    }
+    const collection = await this.client.getCollection(this.collName);
 
-    const fn = (collection as any)[op];
+    const fn = collection[op];
 
     if (!fn || !(fn instanceof Function)) {
       throw new TypeError(`${op} not an attr`);

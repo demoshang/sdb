@@ -1,1 +1,1 @@
-declare module 'another-json-schema'
+declare module 'another-json-schema';

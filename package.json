@@ -35,7 +35,6 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-formatter-friendly": "^7.0.0",
-    "eslint-loader": "^3.0.3",
     "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-prettier": "^3.1.2",
     "nyc": "^15.0.1",
@@ -43,7 +42,7 @@
     "ts-node": "^8.10.1",
     "typescript": "^3.8.3"
   },
-  "optionalDependencies": {
+  "peerDependencies": {
     "mongodb": "^3.5.7",
     "nedb": "^1.8.0"
   },
