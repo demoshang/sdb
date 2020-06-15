@@ -40,6 +40,7 @@ jobs:
       - name: coverage
         working-directory: ./
         run: |
+          npm i nedb mongodb
           npm run coverage
 
       - name: upload coverage
