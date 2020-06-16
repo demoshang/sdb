@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+// @ts-ignore
 import AJS from 'another-json-schema';
 
 import { formatCreate } from './format/format-create';

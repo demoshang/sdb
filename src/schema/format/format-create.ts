@@ -1,3 +1,4 @@
+// @ts-ignore
 import AJS from 'another-json-schema';
 
 function formatCreate(schema: any, doc: any, opts?: object) {
